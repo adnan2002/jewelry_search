@@ -88,6 +88,15 @@ Then open http://localhost:8501 — upload an image from your disk 📁 or take 
 
 ---
 
+## ☁️ Deploy on Streamlit Community Cloud
+
+1. Push the repo to GitHub.
+2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app** → pick this repo and `app.py`.
+3. ⚠️ **Advanced settings → Python version → 3.12** — TensorFlow has no wheels for Python 3.14 yet, which is why a default deploy fails with `No matching distribution found for tensorflow`.
+4. Click **Deploy** 🚀
+
+---
+
 ## 📁 Project structure
 
 ```
