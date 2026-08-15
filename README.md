@@ -11,6 +11,8 @@ Upload a photo — find visually similar pieces from the catalog in milliseconds
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.61-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-1.5-327EFF?style=for-the-badge&logo=chromadb&logoColor=white)](https://www.trychroma.com/)
 
+### 🚀 [Try the live app → jewelry-search-embeddings.streamlit.app](https://jewelry-search-embeddings.streamlit.app/)
+
 </div>
 
 ---
@@ -89,6 +91,8 @@ Then open http://localhost:8501 — upload an image from your disk 📁 or take 
 ---
 
 ## ☁️ Deploy on Streamlit Community Cloud
+
+🔗 **Live app:** https://jewelry-search-embeddings.streamlit.app/
 
 1. Push the repo to GitHub.
 2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app** → pick this repo and `app.py`.
