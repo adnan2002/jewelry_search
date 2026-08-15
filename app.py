@@ -7,34 +7,22 @@ from PIL import Image
 
 import numpy as np
 
-from tensorflow.keras.applications import MobileNetV2
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
-from tensorflow.keras.layers import GlobalAveragePooling2D
-from tensorflow.keras.models import Model
-from tensorflow.keras.utils import img_to_array
+import onnxruntime as ort
 
 from sklearn.metrics.pairwise import cosine_similarity
 
 IMG_SIZE = (224, 224)
 TOP_K = 25
+MODEL_PATH = "model/embedding_model.onnx"
 CHROMA_PATH = "data/chroma"
 COLLECTION_NAME = "image_embeddings"
 
 
 @st.cache_resource
 def load_embedding_model():
-    base_model = MobileNetV2(
-        weights="imagenet",
-        include_top=False,
-        input_shape=(224, 224, 3),
-    )
+    session = ort.InferenceSession(MODEL_PATH, providers=["CPUExecutionProvider"])
 
-    embedding_model = Model(
-        inputs=base_model.input,
-        outputs=GlobalAveragePooling2D()(base_model.output),
-    )
-
-    return embedding_model
+    return session
 
 
 @st.cache_resource
@@ -48,11 +36,10 @@ def load_collection():
 def get_embedding(embedding_model, image):
     image = image.convert("RGB").resize(IMG_SIZE)
 
-    image = img_to_array(image)
+    image = np.asarray(image, dtype=np.float32) / 127.5 - 1.0
     image = np.expand_dims(image, axis=0)
-    image = preprocess_input(image)
 
-    embedding = embedding_model.predict(image, verbose=0)
+    embedding = embedding_model.run(None, {"input_1": image})[0]
 
     return embedding
 

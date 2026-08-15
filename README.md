@@ -7,7 +7,7 @@
 Upload a photo — find visually similar pieces from the catalog in milliseconds.
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.21-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
+[![ONNX](https://img.shields.io/badge/ONNX_Runtime-1.28-005CED?style=for-the-badge&logo=onnx&logoColor=white)](https://onnxruntime.ai/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.61-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-1.5-327EFF?style=for-the-badge&logo=chromadb&logoColor=white)](https://www.trychroma.com/)
 
@@ -60,7 +60,7 @@ Upload a necklace photo and instantly get the 25 most visually similar pieces, r
 ```
 
 1. **Offline** — every catalog image passes through `MobileNetV2(include_top=False)` + `GlobalAveragePooling2D`, producing a 1280-dimensional embedding that is saved to ChromaDB.
-2. **Online** — the query photo is resized to 224×224, normalized with `preprocess_input`, embedded with the same model, and compared against the index.
+2. **Online** — the query photo is resized to 224×224, normalized, embedded with the exported **ONNX** model (identical weights, tiny runtime), and compared against the index.
 3. Results are sorted by cosine similarity, filtered by a user-adjustable threshold (so a photo of a phone returns *"no similar items"* instead of junk). 🚫📱
 
 ---
@@ -92,8 +92,7 @@ Then open http://localhost:8501 — upload an image from your disk 📁 or take 
 
 1. Push the repo to GitHub.
 2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app** → pick this repo and `app.py`.
-3. ⚠️ **Advanced settings → Python version → 3.12** — TensorFlow has no wheels for Python 3.14 yet, which is why a default deploy fails with `No matching distribution found for tensorflow`.
-4. Click **Deploy** 🚀
+3. Click **Deploy** 🚀 — inference runs on ONNX Runtime, so the default Python version works out of the box (no TensorFlow install needed on the cloud).
 
 ---
 
@@ -105,6 +104,7 @@ Then open http://localhost:8501 — upload an image from your disk 📁 or take 
 │   ├── Jewellery_Data/      # Tanishq dataset (necklaces, rings)
 │   └── chroma/              # ChromaDB vector index (pre-computed embeddings)
 ├── examples/                # Sample images used in this README
+├── model/                   # Exported ONNX embedding model (inference)
 ├── prepare_data.py          # Offline pipeline: images → embeddings → ChromaDB
 ├── app.py                   # Streamlit web application
 ├── embedding.ipynb          # Exploration & prototyping notebook
@@ -117,12 +117,13 @@ Then open http://localhost:8501 — upload an image from your disk 📁 or take 
 
 | Icon | Technology | Role |
 |------|------------|------|
-| 🤖 | **TensorFlow / Keras** | Transfer learning — MobileNetV2 backbone for 1280-d visual embeddings |
-| ⚡ | **ChromaDB** | Persistent vector database — fast nearest-neighbor retrieval |
+| 🤖 | **MobileNetV2** | Transfer-learning backbone (TensorFlow, offline) — 1280-d visual embeddings |
+| ⚡ | **ONNX Runtime** | Lightning-fast inference of the exported embedding model (no TF on the server) |
+| 🧬 | **ChromaDB** | Persistent vector database — fast nearest-neighbor retrieval |
 | 🎈 | **Streamlit** | Interactive web UI with `@st.cache_resource` for snappy loads |
 | 🧮 | **scikit-learn** | Cosine similarity ranking of retrieved vectors |
 | 🖼️ | **Pillow / NumPy** | Image preprocessing (resize, normalize, array ops) |
-| 🐍 | **Python 3.12** | Glue that makes it all work |
+| 🐍 | **Python** | Glue that makes it all work |
 
 ---
 
